@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Machine Learning Architecture - Yash AI Export</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Noto+Sans+Gujarati:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card-user: #f1f5f9;
+      --card-assistant: #ffffff;
+      --border-user: #e2e8f0;
+      --border-assistant: #cbd5e1;
+      --accent: #10a37f;
+      --text: #0f172a;
+      --text-muted: #64748b;
+    }
+    
+    * {
+      box-sizing: border-box !important;
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      margin: 0 !important;
+      padding: 0 !important;
+      
+    }
+    body {
+      font-family: "Noto Sans Devanagari", "Noto Sans Gujarati", "Nirmala UI", "Segoe UI Historic", "Kohinoor Devanagari", "Lohit Devanagari", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", "Arial Unicode MS", Arial, sans-serif !important;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 28px 16px;
+      -webkit-font-smoothing: antialiased;
+      word-wrap: break-word !important;
+      overflow-wrap: break-word !important;
+    }
+    .container {
+      width: 100% !important;
+      max-width: 860px !important;
+      margin: 0 auto !important;
+      box-sizing: border-box !important;
+      overflow-x: hidden !important;
+    }
+    .doc-header {
+      background: var(--card-assistant);
+      border: 1px solid var(--border-assistant);
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+      box-sizing: border-box !important;
+    }
+    .doc-header h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text);
+      line-height: 1.3;
+      word-break: break-word !important;
+      overflow-wrap: break-word !important;
+    }
+    .doc-meta {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+    }
+    .print-btn-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 14px;
+    }
+    .print-btn {
+      background-color: var(--accent);
+      color: #ffffff;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      transition: opacity 0.15s ease;
+    }
+    .print-btn:hover { opacity: 0.9; }
+
+    /* Message Cards */
+    .message-card {
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 14px;
+      border: 1px solid;
+      box-sizing: border-box !important;
+      max-width: 100% !important;
+      break-inside: auto;
+      page-break-inside: auto;
+      word-break: break-word !important;
+      overflow-wrap: break-word !important;
+    }
+    .user-message {
+      background-color: var(--card-user);
+      border-color: var(--border-user);
+    }
+    .assistant-message {
+      background-color: var(--card-assistant);
+      border-color: var(--border-assistant);
+      border-left: 4px solid var(--accent);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+    }
+    .message-header {
+      display: flex !important;
+      justify-content: space-between !important;
+      align-items: flex-start !important;
+      gap: 12px !important;
+      margin-bottom: 8px !important;
+      padding-bottom: 6px !important;
+      border-bottom: 1px solid var(--border-user) !important;
+      break-inside: avoid !important;
+      break-after: avoid !important;
+      page-break-inside: avoid !important;
+      page-break-after: avoid !important;
+      box-sizing: border-box !important;
+    }
+    .role-badge {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      min-width: 0 !important;
+      flex: 1 1 auto !important;
+      overflow: hidden !important;
+    }
+    .role-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .role-name {
+      font-weight: 600 !important;
+      font-size: 0.9rem !important;
+      word-break: break-word !important;
+      overflow-wrap: break-word !important;
+      line-height: 1.35 !important;
+    }
+    .message-time {
+      font-size: 0.76rem !important;
+      color: var(--text-muted) !important;
+      flex-shrink: 0 !important;
+      white-space: nowrap !important;
+      text-align: right !important;
+      padding-top: 2px !important;
+    }
+    .in-progress-text {
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* Message Attachments & Images */
+    .message-attachments {
+      margin: 8px 0 12px 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      box-sizing: border-box !important;
+      max-width: 100% !important;
+    }
+    .attachment-item {
+      border: 1px solid var(--border-assistant);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--card-assistant);
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    .attachment-image img {
+      display: block;
+      max-width: 100% !important;
+      max-height: 320px;
+      object-fit: contain;
+    }
+    .attachment-caption {
+      padding: 6px 10px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-user);
+      word-break: break-word !important;
+      overflow-wrap: break-word !important;
+      font-weight: 500;
+    }
+    .attachment-file {
+      padding: 8px 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      max-width: 100%;
+      word-break: break-word;
+    }
+
+    /* Markdown Typography & Structure */
+    .markdown-content {
+      font-size: 0.92rem;
+      line-height: 1.62;
+      color: var(--text);
+      word-break: break-word !important;
+      overflow-wrap: break-word !important;
+      box-sizing: border-box !important;
+      max-width: 100% !important;
+    }
+    .markdown-content h1 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin: 14px 0 6px 0;
+      color: var(--text);
+      break-inside: avoid !important;
+      break-after: avoid !important;
+      page-break-inside: avoid !important;
+      page-break-after: avoid !important;
+      word-break: break-word !important;
+    }
+    .markdown-content h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin: 12px 0 6px 0;
+      color: var(--text);
+      break-inside: avoid !important;
+      break-after: avoid !important;
+      page-break-inside: avoid !important;
+      page-break-after: avoid !important;
+      word-break: break-word !important;
+    }
+    .markdown-content h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin: 10px 0 4px 0;
+      color: var(--text);
+      break-inside: avoid !important;
+      break-after: avoid !important;
+      page-break-inside: avoid !important;
+      page-break-after: avoid !important;
+      word-break: break-word !important;
+    }
+    .markdown-content h4, .markdown-content h5, .markdown-content h6 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin: 8px 0 4px 0;
+      color: var(--text);
+      break-inside: avoid !important;
+      break-after: avoid !important;
+      page-break-inside: avoid !important;
+      page-break-after: avoid !important;
+      word-break: break-word !important;
+    }
+    .markdown-content p {
+      margin: 6px 0;
+      word-break: break-word !important;
+      overflow-wrap: break-word !important;
+      line-height: 1.6;
+    }
+    .markdown-content p:first-child { margin-top: 0; }
+    .markdown-content p:last-child { margin-bottom: 0; }
+    .markdown-content strong { font-weight: 600; }
+    .markdown-content em { font-style: italic; }
+
+    /* Reliable Markdown Lists for Print & PDF */
+    .markdown-content ul {
+      list-style-type: disc !important;
+      padding-left: 26px !important;
+      margin: 8px 0 !important;
+      box-sizing: border-box !important;
+    }
+    .markdown-content ol {
+      list-style-type: decimal !important;
+      padding-left: 28px !important;
+      margin: 8px 0 !important;
+      box-sizing: border-box !important;
+    }
+    .markdown-content li {
+      margin: 4px 0 !important;
+      line-height: 1.6 !important;
+      display: list-item !important;
+      word-break: break-word !important;
+      overflow-wrap: break-word !important;
+    }
+    .markdown-content li > p {
+      display: inline !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+    .markdown-content ul ul {
+      list-style-type: circle !important;
+      padding-left: 22px !important;
+      margin: 4px 0 !important;
+    }
+    .markdown-content ul ul ul {
+      list-style-type: square !important;
+      padding-left: 20px !important;
+      margin: 2px 0 !important;
+    }
+    .markdown-content ol ol {
+      list-style-type: lower-alpha !important;
+      padding-left: 22px !important;
+      margin: 4px 0 !important;
+    }
+
+    /* Math Blocks */
+    .math-block {
+      background: rgba(100, 116, 139, 0.05);
+      border-left: 3px solid var(--accent);
+      padding: 10px 16px;
+      margin: 10px 0;
+      border-radius: 4px;
+      font-family: "KaTeX_Main", "Cambria Math", "Noto Sans Devanagari", "Times New Roman", serif;
+      font-size: 1.05rem;
+      text-align: center;
+      overflow-x: auto;
+      letter-spacing: 0.02em;
+      word-break: break-word;
+      box-sizing: border-box !important;
+      max-width: 100% !important;
+    }
+
+    /* Embedded Markdown Images */
+    .markdown-image-wrapper {
+      margin: 12px 0;
+      text-align: center;
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+      max-width: 100% !important;
+    }
+    .markdown-embedded-image {
+      max-width: 100% !important;
+      max-height: 380px;
+      border-radius: 8px;
+      border: 1px solid var(--border-assistant);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      object-fit: contain;
+    }
+    .image-caption {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-style: italic;
+    }
+
+    /* Code Blocks */
+    .code-container {
+      background: rgba(100, 116, 139, 0.08);
+      border: 1px solid rgba(100, 116, 139, 0.2);
+      border-radius: 8px;
+      margin: 10px 0;
+      overflow: hidden !important;
+      box-sizing: border-box !important;
+      max-width: 100% !important;
+      width: 100% !important;
+      break-inside: auto;
+    }
+    .code-header {
+      background: rgba(100, 116, 139, 0.12);
+      padding: 4px 10px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid rgba(100, 116, 139, 0.15);
+    }
+    .code-body {
+      padding: 10px 12px;
+      font-family: "JetBrains Mono", Consolas, "Courier New", monospace !important;
+      font-size: 0.84rem;
+      line-height: 1.5;
+      white-space: pre-wrap !important;
+      word-break: break-all !important;
+      overflow-wrap: anywhere !important;
+      box-sizing: border-box !important;
+      max-width: 100% !important;
+    }
+    .code-body code {
+      background: none;
+      padding: 0;
+      border: none;
+      font-family: inherit;
+      white-space: pre-wrap !important;
+      word-break: break-all !important;
+      overflow-wrap: anywhere !important;
+    }
+    .inline-code {
+      font-family: "JetBrains Mono", Consolas, "Courier New", monospace !important;
+      font-size: 0.85em;
+      background-color: rgba(100, 116, 139, 0.12);
+      padding: 2px 5px;
+      border-radius: 4px;
+      border: 1px solid rgba(100, 116, 139, 0.15);
+      word-break: break-word !important;
+      overflow-wrap: break-word !important;
+    }
+
+    /* Tables: Fixed layout ensuring 100% container containment */
+    .table-wrapper {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin: 10px 0;
+      overflow: hidden !important;
+      box-sizing: border-box !important;
+    }
+    .markdown-table {
+      width: 100% !important;
+      max-width: 100% !important;
+      table-layout: fixed !important;
+      border-collapse: collapse !important;
+      font-size: 0.86rem;
+      box-sizing: border-box !important;
+    }
+    .markdown-table th, .markdown-table td {
+      border: 1px solid var(--border-assistant);
+      padding: 6px 10px;
+      text-align: left;
+      vertical-align: top;
+      word-break: break-word !important;
+      overflow-wrap: break-word !important;
+      white-space: normal !important;
+      box-sizing: border-box !important;
+    }
+    .markdown-table th {
+      background-color: rgba(100, 116, 139, 0.08);
+      font-weight: 600;
+      color: var(--text);
+    }
+    .markdown-table tr {
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+    }
+    .markdown-table tr:nth-child(even) td {
+      background-color: rgba(100, 116, 139, 0.03);
+    }
+
+    /* Blockquotes & Dividers */
+    .markdown-content blockquote {
+      border-left: 3px solid var(--accent);
+      padding: 4px 12px;
+      margin: 8px 0;
+      color: var(--text-muted);
+      background-color: rgba(16, 163, 127, 0.04);
+      border-radius: 0 4px 4px 0;
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+      word-break: break-word !important;
+      overflow-wrap: break-word !important;
+    }
+    .markdown-content hr {
+      border: 0;
+      border-top: 1px solid var(--border-assistant);
+      margin: 12px 0;
+    }
+    .export-link {
+      color: var(--accent);
+      text-decoration: underline;
+      word-break: break-all !important;
+      overflow-wrap: anywhere !important;
+    }
+
+    /* Sources & Documents Boxes */
+    .message-sources, .message-documents {
+      margin-top: 12px;
+      padding: 8px 12px;
+      background: rgba(100, 116, 139, 0.05);
+      border: 1px solid var(--border-assistant);
+      border-radius: 8px;
+      font-size: 0.82rem;
+      break-inside: avoid !important;
+      page-break-inside: avoid !important;
+      box-sizing: border-box !important;
+      max-width: 100% !important;
+      word-break: break-word !important;
+      overflow-wrap: break-word !important;
+    }
+    .sources-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+    }
+    .sources-list {
+      padding-left: 18px;
+      margin: 2px 0;
+    }
+    .sources-list li {
+      margin: 2px 0;
+      line-height: 1.45;
+      word-break: break-word !important;
+      overflow-wrap: break-word !important;
+    }
+    .source-snippet {
+      color: var(--text-muted);
+      font-style: italic;
+    }
+
+    /* Saved Highlights */
+    .rgb-marker-highlight {
+      display: inline;
+      padding: 1px 3px;
+      border-radius: 3px;
+      box-decoration-break: clone;
+      -webkit-box-decoration-break: clone;
+    }
+
+    @media print {
+      body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      .print-btn-bar { display: none !important; }
+      .doc-header, .message-card {
+        box-shadow: none !important;
+        border-color: #cbd5e1 !important;
+        background-color: #ffffff !important;
+      }
+      .user-message {
+        background-color: #f8fafc !important;
+      }
+      .assistant-message {
+        border-left: 4px solid #10a37f !important;
+      }
+      .message-card {
+        break-inside: auto !important;
+        page-break-inside: auto !important;
+      }
+      .message-header, h1, h2, h3, h4, h5, h6, tr, .attachment-item {
+        break-inside: avoid !important;
+        break-after: avoid !important;
+        page-break-inside: avoid !important;
+        page-break-after: avoid !important;
+      }
+      @page {
+        margin: 14mm 15mm;
+        size: A4;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="print-btn-bar">
+      <button class="print-btn" onclick="window.print()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px; margin-right: 6px;"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>Print / Save to PDF</button>
+    </div>
+    <div class="doc-header">
+      <h1>AI Machine Learning Architecture</h1>
+      <div class="doc-meta">
+        <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -1px; margin-right: 4px;"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg><strong>Exported:</strong> 29/10/2026, 10:32:05 am</span>
+        <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -1px; margin-right: 4px;"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg><strong>Messages:</strong> 4</span>
+        <span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#10a37f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -1px; margin-right: 4px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg><strong>Yash AI Enterprise Platform</strong></span>
+      </div>
+    </div>
+    <div class="messages-list">
+      
+      <div class="message-card user-message">
+        <div class="message-header">
+          <div class="role-badge">
+            <span class="role-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px;"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
+            <span class="role-name">You</span>
+          </div>
+          <span class="message-time">09:00:00 pm</span>
+        </div>
+        
+        <div class="message-body markdown-content">
+          <p>Can you provide an overview of Artificial Intelligence and its real-world domains?</p>
+        </div>
+        
+        
+      </div>
+    
+      <div class="message-card assistant-message">
+        <div class="message-header">
+          <div class="role-badge">
+            <span class="role-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10a37f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px;"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path><line x1="8" y1="16" x2="8" y2="16"></line><line x1="16" y1="16" x2="16" y2="16"></line></svg></span>
+            <span class="role-name">Yash AI (gemini-2.5-flash)</span>
+          </div>
+          <span class="message-time">09:00:05 pm</span>
+        </div>
+        
+        <div class="message-body markdown-content">
+          <p>Artificial <mark data-highlight-id="hl-exp-1" data-highlight-color="green" class="rgb-marker-highlight" style="background-color:yellow;padding:1px 3px;border-radius:3px">intelligence enables</mark> computers to perform tasks that normally require human intelligence. It is used in <mark data-highlight-id="hl-exp-2" data-highlight-color="green" class="rgb-marker-highlight" style="background-color:rgba(16, 185, 129, 0.28);padding:1px 3px;border-radius:3px">healthcare, robotics, education</mark>, and many other fields.</p>
+        </div>
+        
+        
+      </div>
+    
+      <div class="message-card user-message">
+        <div class="message-header">
+          <div class="role-badge">
+            <span class="role-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px;"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
+            <span class="role-name">You</span>
+          </div>
+          <span class="message-time">09:01:00 pm</span>
+        </div>
+        
+        <div class="message-body markdown-content">
+          <p>Show me an example with code and Indian language translation.</p>
+        </div>
+        
+        
+      </div>
+    
+      <div class="message-card assistant-message">
+        <div class="message-header">
+          <div class="role-badge">
+            <span class="role-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#10a37f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px;"><rect x="3" y="11" width="18" height="10" rx="2"></rect><circle cx="12" cy="5" r="2"></circle><path d="M12 7v4"></path><line x1="8" y1="16" x2="8" y2="16"></line><line x1="16" y1="16" x2="16" y2="16"></line></svg></span>
+            <span class="role-name">Yash AI (gemini-2.5-flash)</span>
+          </div>
+          <span class="message-time">09:01:15 pm</span>
+        </div>
+        
+        <div class="message-body markdown-content">
+          <h1>Artificial Intelligence in India</h1>
+<p>કૃત્રિમ બુદ્ધિમત્તા વિવિધ ક્ષેત્રોમાં <mark data-highlight-id="hl-exp-3" data-highlight-color="green" class="rgb-marker-highlight" style="background-color:pink;padding:1px 3px;border-radius:3px">ક્રાંતિ લાવી રહી છે</mark>.
+આર્ટિફિશિયલ ઇન્ટેલિજન્સ માનવ કાર્યક્ષમતા વધારે છે.</p>
+<div class="table-wrapper"><table class="markdown-table"><thead><tr><th style="text-align:left">ક્ષેત્ર (Sector)</th><th style="text-align:left">પ્રભાવ (Impact)</th><th style="text-align:left">પ્રાથમિકતા (Priority)</th></tr></thead><tbody><tr><td style="text-align:left">આરોગ્ય (Health)</td><td style="text-align:left">ઉચ્ચ (High)</td><td style="text-align:left">મહત્વપૂર્ણ</td></tr><tr><td style="text-align:left">શિક્ષણ (Education)</td><td style="text-align:left">ખૂબ ઉચ્ચ (Very High)</td><td style="text-align:left">તાત્કાલિક</td></tr></tbody></table></div>
+<p>Code Implementation:</p>
+<pre><div class="code-container"><div class="code-header">PYTHON</div><pre class="code-body"><code class="language-python"># AI Code Sample
+def analyze(data):
+    return &quot;Analysis complete&quot;</code></pre></div></pre>
+<blockquote>
+<p>कृत्रिम बुद्धिमत्ता हे आधुनिक भारताच्या विकासाचे प्रमुख साधन आहे.</p>
+</blockquote>
+        </div>
+        
+        
+      </div>
+    
+    </div>
+  </div>
+</body>
+</html>
